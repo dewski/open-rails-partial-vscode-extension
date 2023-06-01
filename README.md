@@ -1,6 +1,6 @@
-# Rails Open Partial VS Code Extension
+# Open Rails Partial VS Code Extension
 
-`dewski.rails-open-partial` allows you to open Rails partials directly from your browser using the [Rails Open Partial](https://github.com/dewski/rails-open-partial-chrome-extension) Chrome Extension.
+`dewski.open-rails-partial` allows you to open Rails partials directly from your browser using the [Open Rails Partial](https://github.com/dewski/open-rails-partial-chrome-extension) Chrome Extension.
 
 ## Known Issues
 
