@@ -1,58 +1,15 @@
-# rails-open-partial README
+# Rails Open Partial VS Code Extension
 
-rails-open-partial allows you to open Rails partials directly from your browser.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+`dewski.rails-open-partial` allows you to open Rails partials directly from your browser using the [Rails Open Partial](https://github.com/dewski/rails-open-partial-chrome-extension) Chrome Extension.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+This extension works by checking to see if a filepath exists in any of the workspaces you have open in the current window. When the Chrome extension activates this VS Code extension using the `vscode://dewski.open-rails-partial/partial` URL, it will open the file in the first workspace that matches the filepath.
 
-## Release Notes
+If the file is not found in any of the workspaces of the last open window, it will return an error requiring you to bring focus to the window that has the workspace for the Rails project you are opening a partial for.
 
-Users appreciate release notes as you update your extension.
+## Why is this extension necessary?
 
-### 1.0.0
+As Rails only includes the partial path relative to the root of the Rails project, we do not have access to the absolute path of the file. The built-in `vscode://file/path/to/file` URL scheme requires the absolute path of the file to open it in VS Code.
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Additionally, projects in remote workspaces such as Codespaces are not supported by the built-in `vscode://file/path/to/file` URL scheme.
