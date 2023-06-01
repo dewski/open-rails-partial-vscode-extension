@@ -6,6 +6,7 @@
   "engines": {
     "vscode": "^1.78.0"
   },
+  "icon": "images/icon.png",
   "publisher": "dewski",
   "repository": {
     "type": "git",
