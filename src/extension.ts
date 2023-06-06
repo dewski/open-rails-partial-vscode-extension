@@ -2,73 +2,64 @@ import * as vscode from "vscode";
 import querystring from "querystring";
 import { text } from "stream/consumers";
 
+async function isFileAtUri(uri: vscode.Uri): Promise<boolean> {
+  try {
+    return (
+      ((await vscode.workspace.fs.stat(uri)).type & vscode.FileType.File) !== 0
+    );
+  } catch {
+    return false;
+  }
+}
+
 type TextDocument = {
   uri: vscode.Uri;
   options: vscode.TextDocumentShowOptions;
 };
 
 async function editorTextDocuments(path: string): Promise<TextDocument[]> {
-  const textDocuments: TextDocument[] = [];
-  if (!vscode.workspace.workspaceFolders) {
-    return textDocuments;
+  // Without any workspace folders we will not be able to open the requested path
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders) {
+    return [];
   }
 
-  const workspaceFolder = vscode.workspace.workspaceFolders.find(
-    async ({ uri }) => {
-      const workspaceFileUri = vscode.Uri.joinPath(uri, path);
-      try {
-        await vscode.workspace.fs.stat(workspaceFileUri);
-      } catch (error) {
-        return false;
-      }
-    }
+  // See if any workspace folder contains a file at the provided path
+  const candidates = workspaceFolders.map(({ uri }) =>
+    vscode.Uri.joinPath(uri, path)
   );
-  if (!workspaceFolder) {
-    return textDocuments;
+  const fileUri = candidates.find(isFileAtUri);
+  if (!fileUri) {
+    return [];
   }
 
-  const workspaceFileUri = vscode.Uri.joinPath(workspaceFolder.uri, path);
-  try {
-    await vscode.workspace.fs.stat(workspaceFileUri);
+  const textDocuments: TextDocument[] = [];
+  const appendTextDocument = (uri: vscode.Uri) => {
+    const firstDocument = textDocuments.length === 0;
+    const viewColumn = firstDocument
+      ? vscode.ViewColumn.Active
+      : vscode.ViewColumn.Beside;
 
-    textDocuments.unshift({
-      uri: workspaceFileUri,
+    textDocuments.push({
+      uri,
       options: {
-        preserveFocus: false,
-        preview: false,
-        viewColumn: vscode.ViewColumn.Active,
+        preserveFocus: !firstDocument,
+        preview: !firstDocument,
+        viewColumn,
       },
     });
-  } catch (error) {
-    console.error(error);
-    return textDocuments;
-  }
+  };
 
   // If the filepath is a view component, open a split view with the HTML file as the first editor
-  const viewComponentHtmlPath = path.replace(".rb", ".html.erb");
-  if (path !== viewComponentHtmlPath) {
-    const componentHtmlUri = vscode.Uri.joinPath(
-      workspaceFolder.uri,
-      path.replace(".rb", ".html.erb")
-    );
-
-    try {
-      await vscode.workspace.fs.stat(componentHtmlUri);
-      textDocuments.unshift({
-        uri: componentHtmlUri,
-        options: {
-          preserveFocus: true,
-
-          // If the user doesn't start editing this file, close it automatically
-          preview: true,
-          viewColumn: vscode.ViewColumn.Beside,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      return textDocuments;
+  const viewComponentHtmlPath = fileUri.path.replace(".rb", ".html.erb");
+  if (fileUri.path !== viewComponentHtmlPath) {
+    const componentHtmlUri = vscode.Uri.file(viewComponentHtmlPath);
+    if (await isFileAtUri(componentHtmlUri)) {
+      appendTextDocument(componentHtmlUri);
     }
   }
+
+  appendTextDocument(fileUri);
 
   return textDocuments;
 }
