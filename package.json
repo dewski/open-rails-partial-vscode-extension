@@ -2,7 +2,7 @@
   "name": "open-rails-partial",
   "displayName": "Open Rails Partial",
   "description": "VS Code extension that supports opening Rails partials found in development from the browser.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "engines": {
     "vscode": "^1.78.0"
   },

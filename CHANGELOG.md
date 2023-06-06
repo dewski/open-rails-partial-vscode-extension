@@ -7,3 +7,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+## [0.1.2] - 2023-06-05
+
+### Added
+
+- Support for automatically opening View Component files in split view. HTML files will open in the left pane and Ruby files will open in the right pane (#1).
